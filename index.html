@@ -41,27 +41,12 @@
             background-color: #0f172a;
             color: #f8fafc;
         }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
-        .glow-emerald {
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-        }
-        .glow-rose {
-            box-shadow: 0 0 15px rgba(244, 63, 94, 0.3);
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .glow-emerald { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+        .glow-rose { box-shadow: 0 0 15px rgba(244, 63, 94, 0.3); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col bg-slate-900 text-slate-100 antialiased">
@@ -79,14 +64,22 @@
                         <h1 class="text-lg sm:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
                             WorkDuty Pro
                         </h1>
-                        <p class="text-xs text-slate-400 hidden sm:block">উপস্থিতি ও ডিউটি ব্যবস্থাপনা সিস্টেম</p>
+                        <p class="text-xs text-slate-400 hidden sm:block">উপস্থিতি ও সম্পূর্ণ ডিউটি ব্যবস্থাপনা সিস্টেম</p>
                     </div>
                 </div>
 
-                <!-- Clock & Role Switcher -->
-                <div class="flex items-center space-x-4">
+                <!-- Active Employee Switcher, Clock & Role Switcher -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <!-- Current Employee Selector -->
+                    <div class="flex items-center space-x-2 bg-slate-900 border border-slate-700 px-2.5 py-1 rounded-xl">
+                        <i class="fa-solid fa-user-gear text-indigo-400 text-xs"></i>
+                        <select id="activeUserSelect" onchange="changeActiveUser(this.value)" class="bg-transparent text-xs text-slate-200 focus:outline-none font-medium cursor-pointer">
+                            <!-- Dynamic Employee list -->
+                        </select>
+                    </div>
+
                     <!-- Real-Time Clock -->
-                    <div class="hidden md:flex flex-col items-end px-3 py-1 bg-slate-900/60 rounded-lg border border-slate-700/60">
+                    <div class="hidden lg:flex flex-col items-end px-3 py-1 bg-slate-900/60 rounded-lg border border-slate-700/60">
                         <span id="headerClock" class="text-sm font-semibold font-mono text-cyan-400">00:00:00 AM</span>
                         <span id="headerDate" class="text-[10px] text-slate-400">Loading date...</span>
                     </div>
@@ -95,11 +88,11 @@
                     <div class="bg-slate-900 p-1 rounded-xl border border-slate-700 flex items-center shadow-inner">
                         <button id="btnRoleEmp" onclick="switchRole('employee')" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 bg-indigo-600 text-white shadow-md">
                             <i class="fa-solid fa-user-check"></i>
-                            <span>কর্মচারী (Employee)</span>
+                            <span class="hidden sm:inline">কর্মচারী (Employee)</span>
                         </button>
                         <button id="btnRoleAdmin" onclick="switchRole('admin')" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-slate-200 transition-all duration-200">
                             <i class="fa-solid fa-user-shield"></i>
-                            <span>এডমিন (Admin)</span>
+                            <span class="hidden sm:inline">এডমিন (Admin)</span>
                         </button>
                     </div>
                 </div>
@@ -131,7 +124,7 @@
                             </h2>
                             <p class="text-xs sm:text-sm text-slate-400 flex items-center justify-center md:justify-start gap-1">
                                 <i class="fa-solid fa-location-dot text-rose-400"></i>
-                                <span id="locationDisplay">অবস্থান: Dhaka HQ (GPS Verified)</span>
+                                <span id="locationDisplay">অবস্থান: Main Branch (GPS Verified)</span>
                             </p>
                         </div>
 
@@ -172,8 +165,8 @@
                                 <i class="fa-solid fa-calendar-day text-indigo-400"></i>
                                 বর্তমান ডিউটি শিডিউল
                             </h3>
-                            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                                মর্নিং শিফট
+                            <span id="assignedShiftBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                শিফট
                             </span>
                         </div>
 
@@ -183,8 +176,8 @@
                                 <div id="assignedShiftTime" class="text-sm font-bold text-slate-200 font-mono">09:00 AM - 05:00 PM</div>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-slate-900/60 rounded-xl border border-slate-700/50">
-                                <div class="text-xs text-slate-400">ওভারটাইম অবস্থা</div>
-                                <div class="text-sm font-semibold text-emerald-400">প্রযোজ্য (১.৫ গুণ)</div>
+                                <div class="text-xs text-slate-400">ডিপার্টমেন্ট</div>
+                                <div id="empDepartmentDisplay" class="text-sm font-semibold text-emerald-400">General</div>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-slate-900/60 rounded-xl border border-slate-700/50">
                                 <div class="text-xs text-slate-400">সাপ্তাহিক ছুটি</div>
@@ -225,6 +218,7 @@
                                     <th class="py-2.5 px-3">তারিখ</th>
                                     <th class="py-2.5 px-3">কারণ</th>
                                     <th class="py-2.5 px-3">স্ট্যাটাস</th>
+                                    <th class="py-2.5 px-3 text-center">মুছুন</th>
                                 </tr>
                             </thead>
                             <tbody id="empLeaveTable" class="divide-y divide-slate-700/50 text-slate-300">
@@ -251,6 +245,7 @@
                                     <th class="py-2.5 px-3">তারিখ</th>
                                     <th class="py-2.5 px-3">কারণ</th>
                                     <th class="py-2.5 px-3">স্ট্যাটাস</th>
+                                    <th class="py-2.5 px-3 text-center">মুছুন</th>
                                 </tr>
                             </thead>
                             <tbody id="empShiftTable" class="divide-y divide-slate-700/50 text-slate-300">
@@ -269,10 +264,7 @@
                             <i class="fa-solid fa-user-clock text-indigo-400"></i>
                             ব্যক্তিগত উপস্থিতির ইতিহাস (Attendance Logs)
                         </h3>
-                        <p class="text-xs text-slate-400">চলতি মাসের সমস্ত চেক ইন ও চেক আউট রেকর্ড</p>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="month" id="empHistoryMonth" onchange="renderEmpAttendanceHistory()" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                        <p class="text-xs text-slate-400">আপনার সমস্ত চেক ইন ও চেক আউট রেকর্ড</p>
                     </div>
                 </div>
 
@@ -355,7 +347,7 @@
             <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
                 <!-- Navigation Subtabs -->
                 <div class="flex flex-wrap items-center justify-between border-b border-slate-700 pb-3 gap-4">
-                    <div class="flex space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-700/60">
+                    <div class="flex flex-wrap gap-2 bg-slate-900 p-1 rounded-xl border border-slate-700/60">
                         <button id="tabBtnLeaves" onclick="switchAdminTab('leaves')" class="px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition">
                             <i class="fa-solid fa-envelope-open-text mr-1"></i> ছুটির আবেদনসমূহ
                         </button>
@@ -363,10 +355,22 @@
                             <i class="fa-solid fa-rotate mr-1"></i> শিফট পরিবর্তনের আবেদন
                         </button>
                         <button id="tabBtnRoster" onclick="switchAdminTab('roster')" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
-                            <i class="fa-solid fa-users-gear mr-1"></i> রোস্টার ম্যানেজমেন্ট
+                            <i class="fa-solid fa-users-gear mr-1"></i> কর্মচারী ব্যবস্থাপনা (CRUD)
+                        </button>
+                        <button id="tabBtnShiftsCrud" onclick="switchAdminTab('shiftsCrud')" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition">
+                            <i class="fa-solid fa-business-time mr-1"></i> শিফট ব্যবস্থাপনা (CRUD)
                         </button>
                     </div>
-                    <span class="text-xs text-slate-400">এডমিন নিয়ন্ত্রণ প্যানেল</span>
+                    
+                    <!-- Data Utility Actions -->
+                    <div class="flex items-center space-x-2">
+                        <button onclick="exportData()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1 border border-slate-600">
+                            <i class="fa-solid fa-download"></i> এক্সপোর্ট JSON
+                        </button>
+                        <button onclick="resetData()" class="px-3 py-1.5 bg-rose-600/80 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1">
+                            <i class="fa-solid fa-arrow-rotate-left"></i> রিসেট ডেটা
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Tab 1: Leave Requests Approval -->
@@ -378,10 +382,10 @@
                                 <tr>
                                     <th class="py-3 px-4">কর্মচারী</th>
                                     <th class="py-3 px-4">ছুটির ধরন</th>
-                                    <th class="py-3 px-4">তারিখের মেয়ার</th>
+                                    <th class="py-3 px-4">তারিখের মেয়াদ</th>
                                     <th class="py-3 px-4">কারণ</th>
                                     <th class="py-3 px-4">স্ট্যাটাস</th>
-                                    <th class="py-3 px-4 text-center">অ্যাকশন</th>
+                                    <th class="py-3 px-4 text-center">অ্যাকশন / ডিলিট</th>
                                 </tr>
                             </thead>
                             <tbody id="adminLeaveRequestsBody" class="divide-y divide-slate-700/60 text-slate-300">
@@ -403,7 +407,7 @@
                                     <th class="py-3 px-4">তারিখ</th>
                                     <th class="py-3 px-4">কারণ</th>
                                     <th class="py-3 px-4">স্ট্যাটাস</th>
-                                    <th class="py-3 px-4 text-center">অ্যাকশন</th>
+                                    <th class="py-3 px-4 text-center">অ্যাকশন / ডিলিট</th>
                                 </tr>
                             </thead>
                             <tbody id="adminShiftRequestsBody" class="divide-y divide-slate-700/60 text-slate-300">
@@ -413,11 +417,11 @@
                     </div>
                 </div>
 
-                <!-- Tab 3: Employee Roster Management -->
+                <!-- Tab 3: Employee Management (CRUD) -->
                 <div id="adminTabRoster" class="space-y-4 hidden">
                     <div class="flex items-center justify-between">
-                        <h4 class="text-sm font-bold text-slate-200">কর্মচারী তালিকা ও নির্ধারিত শিফট সম্পাদনা</h4>
-                        <button onclick="openModal('addEmpModal')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1">
+                        <h4 class="text-sm font-bold text-slate-200">কর্মচারী তালিকা, সম্পাদন ও অপসারণ</h4>
+                        <button onclick="openModal('addEmpModal')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow">
                             <i class="fa-solid fa-user-plus"></i> নতুন কর্মচারী যুক্ত করুন
                         </button>
                     </div>
@@ -428,12 +432,38 @@
                                     <th class="py-3 px-4">আইডি (ID)</th>
                                     <th class="py-3 px-4">নাম</th>
                                     <th class="py-3 px-4">পদবী</th>
+                                    <th class="py-3 px-4">ডিপার্টমেন্ট</th>
                                     <th class="py-3 px-4">বর্তমান শিফট</th>
-                                    <th class="py-3 px-4 text-center">সম্পাদনা</th>
+                                    <th class="py-3 px-4 text-center">অ্যাকশন (Edit/Delete)</th>
                                 </tr>
                             </thead>
                             <tbody id="adminRosterBody" class="divide-y divide-slate-700/60 text-slate-300">
                                 <!-- Dynamic roster -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Shift Management (CRUD) -->
+                <div id="adminTabShiftsCrud" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-slate-200">কোম্পানির শিফট তালিকা, সংযোজন ও সম্পাদন</h4>
+                        <button onclick="openModal('shiftCrudModal')" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow">
+                            <i class="fa-solid fa-plus"></i> নতুন শিফট তৈরি করুন
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead class="text-slate-400 bg-slate-900/60 uppercase border-b border-slate-700">
+                                <tr>
+                                    <th class="py-3 px-4">শিফটের নাম</th>
+                                    <th class="py-3 px-4">শুরুর সময়</th>
+                                    <th class="py-3 px-4">শেষের সময়</th>
+                                    <th class="py-3 px-4 text-center">অ্যাকশন (Edit/Delete)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminShiftsListBody" class="divide-y divide-slate-700/60 text-slate-300">
+                                <!-- Dynamic shift list -->
                             </tbody>
                         </table>
                     </div>
@@ -448,7 +478,7 @@
                             <i class="fa-solid fa-list-check text-emerald-400"></i>
                             লাইভ চেক-ইন ও উপস্থিতি মনিটরিং লগ
                         </h3>
-                        <p class="text-xs text-slate-400">আজকের সমস্ত কর্মচারীদের রিয়েল-টাইম উপস্থিতি</p>
+                        <p class="text-xs text-slate-400">এডমিন ইচ্ছা করলে যেকোনো ভুল রেকর্ড এডিট বা রিমুভ করতে পারবেন</p>
                     </div>
                     <div class="flex items-center space-x-2">
                         <select id="adminFilterStatus" onchange="renderAdminLiveLogs()" class="bg-slate-900 border border-slate-700 text-xs rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-indigo-500">
@@ -456,7 +486,6 @@
                             <option value="Present">উপস্থিত (Checked In)</option>
                             <option value="Checked Out">প্রস্থানকৃত (Checked Out)</option>
                             <option value="On Leave">ছুটিতে আছে</option>
-                            <option value="Absent">অনুপস্থিত</option>
                         </select>
                     </div>
                 </div>
@@ -470,8 +499,8 @@
                                 <th class="py-3 px-4">চেক ইন</th>
                                 <th class="py-3 px-4">চেক আউট</th>
                                 <th class="py-3 px-4">ডিউটি স্থায়িত্ব</th>
-                                <th class="py-3 px-4">অবস্থান</th>
                                 <th class="py-3 px-4">স্ট্যাটাস</th>
+                                <th class="py-3 px-4 text-center">অ্যাকশন (Delete)</th>
                             </tr>
                         </thead>
                         <tbody id="adminLiveLogsBody" class="divide-y divide-slate-700/60 text-slate-300">
@@ -487,9 +516,8 @@
 
     <!-- FOOTER -->
     <footer class="bg-slate-900 border-t border-slate-800 text-xs text-slate-500 py-4 text-center mt-auto">
-        <p>© 2026 WorkDuty Pro - উপস্থিতি ও ডিউটি সময় পরিবর্তন ব্যবস্থাপনা অ্যাপ। সর্বস্বত্ব সংরক্ষিত।</p>
+        <p>© 2026 WorkDuty Pro - উপস্থিতি ও সম্পূর্ণ ডিউটি ব্যবস্থাপনা সিস্টেম।</p>
     </footer>
-
 
     <!-- MODALS -->
 
@@ -552,9 +580,7 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1">পছন্দনীয় শিফট / সময়</label>
                     <select id="desiredShift" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
-                        <option value="Morning Shift (08:00 AM - 04:00 PM)">সকাল শিফট (08:00 AM - 04:00 PM)</option>
-                        <option value="Evening Shift (02:00 PM - 10:00 PM)">সন্ধ্যা শিফট (02:00 PM - 10:00 PM)</option>
-                        <option value="Night Shift (10:00 PM - 06:00 AM)">নাইট শিফট (10:00 PM - 06:00 AM)</option>
+                        <!-- Dynamic Options loaded from customShifts -->
                     </select>
                 </div>
                 <div>
@@ -569,17 +595,18 @@
         </div>
     </div>
 
-    <!-- Add Employee Modal (Admin) -->
+    <!-- Employee Add/Edit Modal (Admin) -->
     <div id="addEmpModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-700 pb-3">
-                <h3 class="font-bold text-slate-100 flex items-center gap-2">
+                <h3 id="empModalTitle" class="font-bold text-slate-100 flex items-center gap-2">
                     <i class="fa-solid fa-user-plus text-emerald-400"></i>
                     নতুন কর্মচারী যোগ করুন
                 </h3>
                 <button onclick="closeModal('addEmpModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <form id="addEmpForm" onsubmit="handleAddEmployeeSubmit(event)" class="space-y-4">
+            <form id="addEmpForm" onsubmit="handleEmpSave(event)" class="space-y-4">
+                <input type="hidden" id="editEmpId" value="">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1">পূর্ণ নাম</label>
                     <input type="text" id="newEmpName" required placeholder="যেমন: আব্দুর রহমান" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
@@ -589,11 +616,13 @@
                     <input type="text" id="newEmpRole" required placeholder="যেমন: Software Engineer" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">ডিপার্টমেন্ট (Department)</label>
+                    <input type="text" id="newEmpDept" required placeholder="যেমন: IT / HR / Sales" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
                     <label class="block text-xs font-semibold text-slate-300 mb-1">প্রাথমিক শিফট</label>
                     <select id="newEmpShift" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
-                        <option value="09:00 AM - 05:00 PM">ডে শিফট (09:00 AM - 05:00 PM)</option>
-                        <option value="08:00 AM - 04:00 PM">মর্নিং শিফট (08:00 AM - 04:00 PM)</option>
-                        <option value="02:00 PM - 10:00 PM">ইভনিং শিফট (02:00 PM - 10:00 PM)</option>
+                        <!-- Dynamic options -->
                     </select>
                 </div>
                 <div class="flex justify-end space-x-2 pt-2 border-t border-slate-700">
@@ -604,45 +633,74 @@
         </div>
     </div>
 
+    <!-- Shift Add/Edit Modal (Admin) -->
+    <div id="shiftCrudModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <h3 id="shiftCrudModalTitle" class="font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-business-time text-cyan-400"></i>
+                    নতুন শিফট যোগ করুন
+                </h3>
+                <button onclick="closeModal('shiftCrudModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="shiftCrudForm" onsubmit="handleShiftSave(event)" class="space-y-4">
+                <input type="hidden" id="editShiftId" value="">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">শিফটের নাম</label>
+                    <input type="text" id="shiftNameInput" required placeholder="যেমন: Morning Shift" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">শুরুর সময় (Start Time)</label>
+                        <input type="text" id="shiftStartTimeInput" required placeholder="09:00 AM" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">শেষের সময় (End Time)</label>
+                        <input type="text" id="shiftEndTimeInput" required placeholder="05:00 PM" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2 border-t border-slate-700">
+                    <button type="button" onclick="closeModal('shiftCrudModal')" class="px-4 py-2 bg-slate-700 text-slate-300 text-xs rounded-xl font-semibold hover:bg-slate-600">বাতিল</button>
+                    <button type="submit" class="px-4 py-2 bg-cyan-600 text-white text-xs rounded-xl font-semibold hover:bg-cyan-700 shadow-md">সংরক্ষণ করুন</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast Notification Container -->
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2"></div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC WITH FULL CRUD -->
     <script>
-        // GLOBAL STATE & STORAGE INITIALIZATION
-        const CURRENT_USER = {
-            id: 'EMP-102',
-            name: 'তানভীর আহমেদ',
-            role: 'Senior Executive'
-        };
+        // Default Datasets
+        const defaultShifts = [
+            { id: 'S1', name: 'Day Shift', startTime: '09:00 AM', endTime: '05:00 PM' },
+            { id: 'S2', name: 'Morning Shift', startTime: '08:00 AM', endTime: '04:00 PM' },
+            { id: 'S3', name: 'Evening Shift', startTime: '02:00 PM', endTime: '10:00 PM' },
+            { id: 'S4', name: 'Night Shift', startTime: '10:00 PM', endTime: '06:00 AM' }
+        ];
 
-        let activeRole = 'employee'; // 'employee' or 'admin'
-        let timerInterval = null;
-
-        // Default Sample Data Structure
         const defaultEmployees = [
-            { id: 'EMP-101', name: 'মোঃ করিম হোসেন', designation: 'Manager', shift: '09:00 AM - 05:00 PM' },
-            { id: 'EMP-102', name: 'তানভীর আহমেদ', designation: 'Senior Executive', shift: '09:00 AM - 05:00 PM' },
-            { id: 'EMP-103', name: 'সাদিয়া ইসলাম', designation: 'UI/UX Designer', shift: '10:00 AM - 06:00 PM' },
-            { id: 'EMP-104', name: 'রাফসান হাবিব', designation: 'Support Lead', shift: '02:00 PM - 10:00 PM' }
+            { id: 'EMP-101', name: 'মোঃ করিম হোসেন', designation: 'Manager', department: 'Operations', shift: 'Day Shift (09:00 AM - 05:00 PM)' },
+            { id: 'EMP-102', name: 'তানভীর আহমেদ', designation: 'Senior Executive', department: 'IT', shift: 'Day Shift (09:00 AM - 05:00 PM)' },
+            { id: 'EMP-103', name: 'সাদিয়া ইসলাম', designation: 'UI/UX Designer', department: 'Design', shift: 'Morning Shift (08:00 AM - 04:00 PM)' },
+            { id: 'EMP-104', name: 'রাফসান হাবিব', designation: 'Support Lead', department: 'Support', shift: 'Evening Shift (02:00 PM - 10:00 PM)' }
         ];
 
         const defaultAttendanceLogs = [
-            { id: 1, empId: 'EMP-101', empName: 'মোঃ করিম হোসেন', date: getTodayFormatted(), checkIn: '08:55 AM', checkOut: '--:--', duration: 'চলমান', location: 'Dhaka HQ', status: 'Present' },
-            { id: 2, empId: 'EMP-103', empName: 'সাদিয়া ইসলাম', date: getTodayFormatted(), checkIn: '10:02 AM', checkOut: '--:--', duration: 'চলমান', location: 'Dhaka HQ', status: 'Present' },
-            { id: 3, empId: 'EMP-104', empName: 'রাফসান হাবিব', date: getTodayFormatted(), checkIn: '--:--', checkOut: '--:--', duration: '0 ঘণ্টা', location: 'N/A', status: 'On Leave' }
+            { id: 101, empId: 'EMP-101', empName: 'মোঃ করিম হোসেন', date: getTodayFormatted(), checkIn: '08:55 AM', checkOut: '--:--', duration: 'চলমান', location: 'Main Branch', status: 'Present' },
+            { id: 102, empId: 'EMP-103', empName: 'সাদিয়া ইসলাম', date: getTodayFormatted(), checkIn: '08:02 AM', checkOut: '--:--', duration: 'চলমান', location: 'Main Branch', status: 'Present' }
         ];
 
         const defaultLeaveRequests = [
-            { id: 'LV-101', empId: 'EMP-102', empName: 'তানভীর আহমেদ', type: 'Casual Leave', startDate: getTodayFormatted(), endDate: getTodayFormatted(), reason: 'ব্যক্তিগত কাজের জন্য ছুটি প্রয়োজন', status: 'Pending' },
-            { id: 'LV-100', empId: 'EMP-104', empName: 'রাফসান হাবিব', type: 'Sick Leave', startDate: getTodayFormatted(), endDate: getTodayFormatted(), reason: 'জ্বরজনিত কারণে একদিনের ছুটি', status: 'Approved' }
+            { id: 'LV-101', empId: 'EMP-102', empName: 'তানভীর আহমেদ', type: 'Casual Leave', startDate: getTodayFormatted(), endDate: getTodayFormatted(), reason: 'ব্যক্তিগত কাজ', status: 'Pending' }
         ];
 
         const defaultShiftRequests = [
-            { id: 'SF-101', empId: 'EMP-102', empName: 'তানভীর আহমেদ', desiredShift: 'Morning Shift (08:00 AM - 04:00 PM)', date: getTodayFormatted(), reason: 'সকালের শিফটে ট্রাফিক কম থাকে', status: 'Pending' }
+            { id: 'SF-101', empId: 'EMP-102', empName: 'তানভীর আহমেদ', desiredShift: 'Morning Shift (08:00 AM - 04:00 PM)', date: getTodayFormatted(), reason: 'ব্যক্তিগত সুবিধা', status: 'Pending' }
         ];
 
-        // Retrieve or Set LocalStorage
+        // Storage Helpers
         function getStorage(key, defaultVal) {
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : defaultVal;
@@ -652,20 +710,23 @@
             localStorage.setItem(key, JSON.stringify(val));
         }
 
-        // Initialize state variables
+        // Application State
+        let customShifts = getStorage('wp_shifts_list', defaultShifts);
         let employees = getStorage('wp_employees', defaultEmployees);
         let attendanceLogs = getStorage('wp_attendance', defaultAttendanceLogs);
         let leaveRequests = getStorage('wp_leaves', defaultLeaveRequests);
         let shiftRequests = getStorage('wp_shifts', defaultShiftRequests);
-        let currentCheckInState = getStorage('wp_emp_checked_in', false); // true = Checked In
 
-        // UTILITY FUNCTIONS
+        let activeEmpId = getStorage('wp_active_emp_id', employees[0] ? employees[0].id : 'EMP-101');
+        let activeRole = 'employee';
+
+        function getActiveEmployee() {
+            return employees.find(e => e.id === activeEmpId) || employees[0] || { id: 'EMP-100', name: 'User', designation: 'Staff', shift: 'Default Shift' };
+        }
+
         function getTodayFormatted() {
             const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
         }
 
         function formatTime12H(dateObj) {
@@ -675,53 +736,116 @@
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            
             let bgClass = 'bg-slate-800 border-indigo-500 text-indigo-200';
             let icon = 'fa-circle-info';
-            if (type === 'success') {
-                bgClass = 'bg-emerald-900/90 border-emerald-500 text-emerald-200';
-                icon = 'fa-circle-check';
-            } else if (type === 'danger') {
-                bgClass = 'bg-rose-900/90 border-rose-500 text-rose-200';
-                icon = 'fa-circle-xmark';
-            }
+
+            if (type === 'success') { bgClass = 'bg-emerald-900/90 border-emerald-500 text-emerald-200'; icon = 'fa-circle-check'; }
+            else if (type === 'danger') { bgClass = 'bg-rose-900/90 border-rose-500 text-rose-200'; icon = 'fa-circle-xmark'; }
 
             toast.className = `flex items-center space-x-3 p-3.5 rounded-xl border shadow-xl text-xs font-semibold transition-all duration-300 transform translate-y-2 opacity-0 ${bgClass}`;
             toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i> <span>${message}</span>`;
             
             container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.remove('translate-y-2', 'opacity-0');
-            }, 10);
-
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-2');
                 setTimeout(() => toast.remove(), 300);
-            }, 3500);
+            }, 3000);
         }
 
-        // REAL-TIME CLOCK LOGIC
+        // Active Employee Switcher
+        function populateActiveUserSelect() {
+            const select = document.getElementById('activeUserSelect');
+            select.innerHTML = employees.map(emp => `
+                <option value="${emp.id}" ${emp.id === activeEmpId ? 'selected' : ''}>
+                    ${emp.name} (${emp.id})
+                </option>
+            `).join('');
+        }
+
+        function changeActiveUser(empId) {
+            activeEmpId = empId;
+            setStorage('wp_active_emp_id', empId);
+            showToast(`সক্রিয় ব্যবহারকারী হিসেবে ${getActiveEmployee().name} নির্বাচন করা হয়েছে`, 'info');
+            renderEmployeeDashboard();
+        }
+
+        // Clock & Timer
         function updateClock() {
             const now = new Date();
-            const clockEl = document.getElementById('headerClock');
-            const dateEl = document.getElementById('headerDate');
-            const liveDisplay = document.getElementById('liveTimeDisplay');
-
             const timeStr = formatTime12H(now);
             const dateStr = now.toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-            if(clockEl) clockEl.innerText = timeStr;
-            if(dateEl) dateEl.innerText = dateStr;
-            if(liveDisplay) liveDisplay.innerText = timeStr;
+            if(document.getElementById('headerClock')) document.getElementById('headerClock').innerText = timeStr;
+            if(document.getElementById('headerDate')) document.getElementById('headerDate').innerText = dateStr;
+            if(document.getElementById('liveTimeDisplay')) document.getElementById('liveTimeDisplay').innerText = timeStr;
 
-            // Update live working duration if checked in
-            if (currentCheckInState) {
-                calculateCurrentWorkingDuration();
+            const currentEmp = getActiveEmployee();
+            const checkInState = getStorage(`wp_checked_in_${currentEmp.id}`, false);
+            if (checkInState) {
+                calculateCurrentWorkingDuration(currentEmp.id);
             }
         }
 
-        // ROLE SWITCHING LOGIC
+        function calculateCurrentWorkingDuration(empId) {
+            const startTime = getStorage(`wp_checkin_time_${empId}`, null);
+            if (!startTime) return;
+            const diffMinutes = Math.floor((Date.now() - startTime) / (1000 * 60));
+            const hours = Math.floor(diffMinutes / 60);
+            const mins = diffMinutes % 60;
+            const el = document.getElementById('totalWorkingHours');
+            if (el) el.innerText = `${hours} ঘণ্টা ${mins} মি.`;
+        }
+
+        // Check In / Check Out logic
+        function toggleCheckInOut() {
+            const currentEmp = getActiveEmployee();
+            const today = getTodayFormatted();
+            const currentTimeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+            let isCheckedIn = getStorage(`wp_checked_in_${currentEmp.id}`, false);
+
+            if (!isCheckedIn) {
+                setStorage(`wp_checked_in_${currentEmp.id}`, true);
+                setStorage(`wp_checkin_time_${currentEmp.id}`, Date.now());
+
+                let todayLog = attendanceLogs.find(l => l.empId === currentEmp.id && l.date === today);
+                if (todayLog) {
+                    todayLog.checkIn = currentTimeStr;
+                    todayLog.status = 'Present';
+                } else {
+                    attendanceLogs.unshift({
+                        id: Date.now(),
+                        empId: currentEmp.id,
+                        empName: currentEmp.name,
+                        date: today,
+                        checkIn: currentTimeStr,
+                        checkOut: '--:--',
+                        duration: 'চলমান',
+                        location: 'Main Branch',
+                        status: 'Present'
+                    });
+                }
+                setStorage('wp_attendance', attendanceLogs);
+                showToast(`${currentEmp.name}-এর চেক-ইন সম্পন্ন হয়েছে!`, 'success');
+            } else {
+                setStorage(`wp_checked_in_${currentEmp.id}`, false);
+                let todayLog = attendanceLogs.find(l => l.empId === currentEmp.id && l.date === today);
+                if (todayLog) {
+                    todayLog.checkOut = currentTimeStr;
+                    todayLog.status = 'Checked Out';
+                    const startTime = getStorage(`wp_checkin_time_${currentEmp.id}`, Date.now());
+                    const diffMins = Math.floor((Date.now() - startTime) / (1000 * 60));
+                    todayLog.duration = `${Math.floor(diffMins / 60)} ঘণ্টা ${diffMins % 60} মি.`;
+                }
+                setStorage('wp_attendance', attendanceLogs);
+                showToast(`${currentEmp.name}-এর চেক-আউট সম্পন্ন হয়েছে!`, 'danger');
+            }
+
+            renderEmployeeDashboard();
+            renderAdminDashboard();
+        }
+
+        // Role Switcher
         function switchRole(role) {
             activeRole = role;
             const empBtn = document.getElementById('btnRoleEmp');
@@ -744,270 +868,189 @@
             }
         }
 
-        // CHECK IN / CHECK OUT LOGIC
-        function toggleCheckInOut() {
-            const today = getTodayFormatted();
-            const currentTimeStr = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-
-            if (!currentCheckInState) {
-                // Perform Check In
-                currentCheckInState = true;
-                setStorage('wp_emp_checked_in', true);
-                setStorage('wp_checkin_timestamp', Date.now());
-
-                // Find or add entry in attendance logs
-                let todayRecord = attendanceLogs.find(log => log.empId === CURRENT_USER.id && log.date === today);
-                if (todayRecord) {
-                    todayRecord.checkIn = currentTimeStr;
-                    todayRecord.status = 'Present';
-                } else {
-                    attendanceLogs.unshift({
-                        id: Date.now(),
-                        empId: CURRENT_USER.id,
-                        empName: CURRENT_USER.name,
-                        date: today,
-                        checkIn: currentTimeStr,
-                        checkOut: '--:--',
-                        duration: 'চলমান',
-                        location: 'Dhaka HQ',
-                        status: 'Present'
-                    });
-                }
-                setStorage('wp_attendance', attendanceLogs);
-                showToast('সফলভাবে চেক-ইন সম্পন্ন হয়েছে!', 'success');
-            } else {
-                // Perform Check Out
-                currentCheckInState = false;
-                setStorage('wp_emp_checked_in', false);
-
-                let todayRecord = attendanceLogs.find(log => log.empId === CURRENT_USER.id && log.date === today);
-                if (todayRecord) {
-                    todayRecord.checkOut = currentTimeStr;
-                    todayRecord.status = 'Checked Out';
-                    
-                    const startTime = getStorage('wp_checkin_timestamp', Date.now());
-                    const diffMinutes = Math.floor((Date.now() - startTime) / (1000 * 60));
-                    const hours = Math.floor(diffMinutes / 60);
-                    const mins = diffMinutes % 60;
-                    todayRecord.duration = `${hours} ঘণ্টা ${mins} মি.`;
-                }
-                setStorage('wp_attendance', attendanceLogs);
-                showToast('সফলভাবে চেক-আউট সম্পন্ন হয়েছে!', 'danger');
-            }
-
-            renderEmployeeDashboard();
-        }
-
-        function calculateCurrentWorkingDuration() {
-            const startTime = getStorage('wp_checkin_timestamp', null);
-            if (!startTime) return;
-
-            const diffMinutes = Math.floor((Date.now() - startTime) / (1000 * 60));
-            const hours = Math.floor(diffMinutes / 60);
-            const mins = diffMinutes % 60;
-
-            const workingHoursEl = document.getElementById('totalWorkingHours');
-            if (workingHoursEl) workingHoursEl.innerText = `${hours} ঘণ্টা ${mins} মি.`;
-        }
-
-        // RENDER EMPLOYEE DASHBOARD
+        // Render Employee View
         function renderEmployeeDashboard() {
-            const checkInOutBtn = document.getElementById('checkInOutBtn');
-            const checkInOutBtnText = document.getElementById('checkInOutBtnText');
-            const badge = document.getElementById('shiftStatusBadge');
-            const todayIn = document.getElementById('todayCheckInTime');
-            const todayOut = document.getElementById('todayCheckOutTime');
-
+            const currentEmp = getActiveEmployee();
             const today = getTodayFormatted();
-            const todayLog = attendanceLogs.find(log => log.empId === CURRENT_USER.id && log.date === today);
+            const isCheckedIn = getStorage(`wp_checked_in_${currentEmp.id}`, false);
 
-            if (currentCheckInState) {
-                checkInOutBtn.className = "w-full md:w-48 py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 bg-rose-500 hover:bg-rose-600 text-white shadow-lg glow-rose transform hover:-translate-y-0.5 active:translate-y-0";
-                checkInOutBtnText.innerText = "চেক আউট (Out)";
+            document.getElementById('assignedShiftTime').innerText = currentEmp.shift;
+            document.getElementById('empDepartmentDisplay').innerText = currentEmp.department || 'General';
+
+            const btn = document.getElementById('checkInOutBtn');
+            const btnText = document.getElementById('checkInOutBtnText');
+            const badge = document.getElementById('shiftStatusBadge');
+
+            if (isCheckedIn) {
+                btn.className = "w-full md:w-48 py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 bg-rose-500 hover:bg-rose-600 text-white shadow-lg glow-rose transform hover:-translate-y-0.5 active:translate-y-0";
+                btnText.innerText = "চেক আউট (Out)";
                 badge.className = "text-xs px-3 py-1 rounded-full font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-                badge.innerText = "স্ট্যাটাস: বর্তমানে অন-ডিউটি আছেন";
+                badge.innerText = `স্ট্যাটাস: ${currentEmp.name} অন-ডিউটি আছেন`;
             } else {
-                checkInOutBtn.className = "w-full md:w-48 py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg glow-emerald transform hover:-translate-y-0.5 active:translate-y-0";
-                checkInOutBtnText.innerText = "চেক ইন (Check In)";
+                btn.className = "w-full md:w-48 py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg glow-emerald transform hover:-translate-y-0.5 active:translate-y-0";
+                btnText.innerText = "চেক ইন (Check In)";
                 badge.className = "text-xs px-3 py-1 rounded-full font-medium bg-slate-700/80 text-slate-300";
                 badge.innerText = "স্ট্যাটাস: চেক আউট অবস্থায় আছেন";
             }
 
-            if (todayLog) {
-                todayIn.innerText = todayLog.checkIn || '--:--';
-                todayOut.innerText = todayLog.checkOut || '--:--';
-                if (!currentCheckInState && todayLog.duration) {
-                    document.getElementById('totalWorkingHours').innerText = todayLog.duration;
-                }
-            } else {
-                todayIn.innerText = '--:--';
-                todayOut.innerText = '--:--';
-                document.getElementById('totalWorkingHours').innerText = '0 ঘণ্টা 0 মি.';
-            }
+            const todayLog = attendanceLogs.find(l => l.empId === currentEmp.id && l.date === today);
+            document.getElementById('todayCheckInTime').innerText = todayLog ? todayLog.checkIn : '--:--';
+            document.getElementById('todayCheckOutTime').innerText = todayLog ? todayLog.checkOut : '--:--';
 
             renderEmployeeLeaveRequests();
             renderEmployeeShiftRequests();
             renderEmpAttendanceHistory();
+            populateShiftSelectOptions();
         }
 
         function renderEmployeeLeaveRequests() {
+            const currentEmp = getActiveEmployee();
             const table = document.getElementById('empLeaveTable');
-            const myLeaves = leaveRequests.filter(req => req.empId === CURRENT_USER.id);
+            const myLeaves = leaveRequests.filter(req => req.empId === currentEmp.id);
 
             if (myLeaves.length === 0) {
-                table.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-500">কোনো আবেদন পাওয়া যায়নি</td></tr>`;
+                table.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-slate-500">কোনো আবেদন পাওয়া যায়নি</td></tr>`;
                 return;
             }
 
-            table.innerHTML = myLeaves.map(req => {
-                let statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/20 text-amber-300">অপেক্ষমাণ</span>`;
-                if (req.status === 'Approved') statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/20 text-emerald-300">অনুমোদিত</span>`;
-                if (req.status === 'Rejected') statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-rose-500/20 text-rose-300">বাতিলকৃত</span>`;
-
-                return `
-                    <tr class="hover:bg-slate-700/30">
-                        <td class="py-2.5 px-3 font-medium">${req.type}</td>
-                        <td class="py-2.5 px-3 text-slate-400">${req.startDate}</td>
-                        <td class="py-2.5 px-3 text-slate-400 truncate max-w-[120px]" title="${req.reason}">${req.reason}</td>
-                        <td class="py-2.5 px-3">${statusBadge}</td>
-                    </tr>
-                `;
-            }).join('');
+            table.innerHTML = myLeaves.map(req => `
+                <tr class="hover:bg-slate-700/30">
+                    <td class="py-2.5 px-3 font-medium">${req.type}</td>
+                    <td class="py-2.5 px-3 text-slate-400">${req.startDate}</td>
+                    <td class="py-2.5 px-3 text-slate-400 truncate max-w-[100px]">${req.reason}</td>
+                    <td class="py-2.5 px-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${req.status==='Approved'?'bg-emerald-500/20 text-emerald-300':req.status==='Rejected'?'bg-rose-500/20 text-rose-300':'bg-amber-500/20 text-amber-300'}">
+                            ${req.status}
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <button onclick="deleteLeaveRequest('${req.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         function renderEmployeeShiftRequests() {
+            const currentEmp = getActiveEmployee();
             const table = document.getElementById('empShiftTable');
-            const myShifts = shiftRequests.filter(req => req.empId === CURRENT_USER.id);
+            const myShifts = shiftRequests.filter(req => req.empId === currentEmp.id);
 
             if (myShifts.length === 0) {
-                table.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-500">কোনো আবেদন পাওয়া যায়নি</td></tr>`;
+                table.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-slate-500">কোনো আবেদন পাওয়া যায়নি</td></tr>`;
                 return;
             }
 
-            table.innerHTML = myShifts.map(req => {
-                let statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/20 text-amber-300">অপেক্ষমাণ</span>`;
-                if (req.status === 'Approved') statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/20 text-emerald-300">অনুমোদিত</span>`;
-                if (req.status === 'Rejected') statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-rose-500/20 text-rose-300">বাতিলকৃত</span>`;
-
-                return `
-                    <tr class="hover:bg-slate-700/30">
-                        <td class="py-2.5 px-3 font-medium">${req.desiredShift}</td>
-                        <td class="py-2.5 px-3 text-slate-400">${req.date}</td>
-                        <td class="py-2.5 px-3 text-slate-400 truncate max-w-[120px]">${req.reason}</td>
-                        <td class="py-2.5 px-3">${statusBadge}</td>
-                    </tr>
-                `;
-            }).join('');
+            table.innerHTML = myShifts.map(req => `
+                <tr class="hover:bg-slate-700/30">
+                    <td class="py-2.5 px-3 font-medium text-cyan-300">${req.desiredShift}</td>
+                    <td class="py-2.5 px-3 text-slate-400">${req.date}</td>
+                    <td class="py-2.5 px-3 text-slate-400 truncate max-w-[100px]">${req.reason}</td>
+                    <td class="py-2.5 px-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${req.status==='Approved'?'bg-emerald-500/20 text-emerald-300':req.status==='Rejected'?'bg-rose-500/20 text-rose-300':'bg-amber-500/20 text-amber-300'}">
+                            ${req.status}
+                        </span>
+                    </td>
+                    <td class="py-2.5 px-3 text-center">
+                        <button onclick="deleteShiftRequest('${req.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         function renderEmpAttendanceHistory() {
+            const currentEmp = getActiveEmployee();
             const table = document.getElementById('empAttendanceHistoryBody');
-            const logs = attendanceLogs.filter(log => log.empId === CURRENT_USER.id);
+            const logs = attendanceLogs.filter(log => log.empId === currentEmp.id);
 
             if (logs.length === 0) {
-                table.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">উপস্থিতির কোনো তথ্য রেকর্ড করা হয়নি</td></tr>`;
+                table.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-500">উপস্থিতির কোনো তথ্য পাওয়া যায়নি</td></tr>`;
                 return;
             }
 
-            table.innerHTML = logs.map(log => {
-                let statusTag = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400">Present</span>`;
-                if(log.status === 'Checked Out') statusTag = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-700 text-slate-300">Checked Out</span>`;
-                if(log.status === 'On Leave') statusTag = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/20 text-rose-400">On Leave</span>`;
-
-                return `
-                    <tr class="hover:bg-slate-700/20">
-                        <td class="py-3 px-4 font-mono font-medium">${log.date}</td>
-                        <td class="py-3 px-4 text-emerald-400 font-mono">${log.checkIn}</td>
-                        <td class="py-3 px-4 text-rose-400 font-mono">${log.checkOut}</td>
-                        <td class="py-3 px-4 font-mono">${log.duration}</td>
-                        <td class="py-3 px-4 text-xs text-slate-400">${log.location}</td>
-                        <td class="py-3 px-4">${statusTag}</td>
-                    </tr>
-                `;
-            }).join('');
+            table.innerHTML = logs.map(log => `
+                <tr class="hover:bg-slate-700/20">
+                    <td class="py-3 px-4 font-mono font-medium">${log.date}</td>
+                    <td class="py-3 px-4 text-emerald-400 font-mono">${log.checkIn}</td>
+                    <td class="py-3 px-4 text-rose-400 font-mono">${log.checkOut}</td>
+                    <td class="py-3 px-4 font-mono">${log.duration}</td>
+                    <td class="py-3 px-4 text-xs text-slate-400">${log.location}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold ${log.status==='Present'?'bg-emerald-500/20 text-emerald-300':log.status==='Checked Out'?'bg-slate-700 text-slate-300':'bg-rose-500/20 text-rose-300'}">
+                            ${log.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        // RENDER ADMIN DASHBOARD
+        // Render Admin View
         function renderAdminDashboard() {
-            // Metrics Calculations
-            const totalEmp = employees.length;
-            const presentCount = attendanceLogs.filter(l => l.date === getTodayFormatted() && (l.status === 'Present' || l.status === 'Checked Out')).length;
-            const onLeaveCount = attendanceLogs.filter(l => l.date === getTodayFormatted() && l.status === 'On Leave').length;
-            const pendingLeaves = leaveRequests.filter(r => r.status === 'Pending').length;
-            const pendingShifts = shiftRequests.filter(r => r.status === 'Pending').length;
-
-            document.getElementById('metricTotalEmp').innerText = totalEmp;
-            document.getElementById('metricPresent').innerText = presentCount;
-            document.getElementById('metricOnLeave').innerText = onLeaveCount;
-            document.getElementById('metricPending').innerText = pendingLeaves + pendingShifts;
+            document.getElementById('metricTotalEmp').innerText = employees.length;
+            document.getElementById('metricPresent').innerText = attendanceLogs.filter(l => l.date === getTodayFormatted() && (l.status === 'Present' || l.status === 'Checked Out')).length;
+            document.getElementById('metricOnLeave').innerText = leaveRequests.filter(r => r.status === 'Approved' && r.startDate <= getTodayFormatted() && r.endDate >= getTodayFormatted()).length;
+            document.getElementById('metricPending').innerText = leaveRequests.filter(r => r.status === 'Pending').length + shiftRequests.filter(r => r.status === 'Pending').length;
 
             renderAdminLeaveTable();
             renderAdminShiftTable();
             renderAdminRosterTable();
+            renderAdminShiftsList();
             renderAdminLiveLogs();
         }
 
         function switchAdminTab(tab) {
-            const btnLeaves = document.getElementById('tabBtnLeaves');
-            const btnShifts = document.getElementById('tabBtnShifts');
-            const btnRoster = document.getElementById('tabBtnRoster');
-
-            const sectionLeaves = document.getElementById('adminTabLeaves');
-            const sectionShifts = document.getElementById('adminTabShifts');
-            const sectionRoster = document.getElementById('adminTabRoster');
-
-            [btnLeaves, btnShifts, btnRoster].forEach(b => b.className = "px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition");
-            [sectionLeaves, sectionShifts, sectionRoster].forEach(s => s.classList.add('hidden'));
-
-            if(tab === 'leaves') {
-                btnLeaves.className = "px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition";
-                sectionLeaves.classList.remove('hidden');
-            } else if(tab === 'shifts') {
-                btnShifts.className = "px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition";
-                sectionShifts.classList.remove('hidden');
-            } else if(tab === 'roster') {
-                btnRoster.className = "px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition";
-                sectionRoster.classList.remove('hidden');
-            }
+            const tabs = ['leaves', 'shifts', 'roster', 'shiftsCrud'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+                const sec = document.getElementById('adminTab' + t.charAt(0).toUpperCase() + t.slice(1));
+                if (btn && sec) {
+                    btn.className = t === tab ? "px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 text-white transition" : "px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 transition";
+                    sec.classList.toggle('hidden', t !== tab);
+                }
+            });
         }
 
+        // Admin Table Renderers & CRUD Actions
         function renderAdminLeaveTable() {
             const table = document.getElementById('adminLeaveRequestsBody');
             if (leaveRequests.length === 0) {
                 table.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-slate-500">কোনো আবেদন নেই</td></tr>`;
                 return;
             }
-
-            table.innerHTML = leaveRequests.map(req => {
-                let statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/20 text-amber-300">অপেক্ষমাণ</span>`;
-                if (req.status === 'Approved') statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/20 text-emerald-300">অনুমোদিত</span>`;
-                if (req.status === 'Rejected') statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-rose-500/20 text-rose-300">বাতিলকৃত</span>`;
-
-                return `
-                    <tr class="hover:bg-slate-700/20">
-                        <td class="py-3 px-4 font-semibold text-slate-200">${req.empName} <span class="text-[10px] text-slate-400 block">${req.empId}</span></td>
-                        <td class="py-3 px-4">${req.type}</td>
-                        <td class="py-3 px-4 font-mono text-slate-400">${req.startDate} হতে ${req.endDate}</td>
-                        <td class="py-3 px-4 text-slate-300">${req.reason}</td>
-                        <td class="py-3 px-4">${statusBadge}</td>
-                        <td class="py-3 px-4 text-center">
-                            ${req.status === 'Pending' ? `
-                                <div class="flex items-center justify-center space-x-2">
-                                    <button onclick="updateLeaveStatus('${req.id}', 'Approved')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] rounded-lg font-medium shadow">অনুমোদন</button>
-                                    <button onclick="updateLeaveStatus('${req.id}', 'Rejected')" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white text-[11px] rounded-lg font-medium shadow">বাতিল</button>
-                                </div>
-                            ` : `<span class="text-xs text-slate-500">নিষ্পন্ন</span>`}
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            table.innerHTML = leaveRequests.map(req => `
+                <tr class="hover:bg-slate-700/20">
+                    <td class="py-3 px-4 font-semibold text-slate-200">${req.empName} <span class="text-[10px] text-slate-400 block">${req.empId}</span></td>
+                    <td class="py-3 px-4">${req.type}</td>
+                    <td class="py-3 px-4 font-mono text-slate-400">${req.startDate} - ${req.endDate}</td>
+                    <td class="py-3 px-4 text-slate-300">${req.reason}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${req.status==='Approved'?'bg-emerald-500/20 text-emerald-300':req.status==='Rejected'?'bg-rose-500/20 text-rose-300':'bg-amber-500/20 text-amber-300'}">
+                            ${req.status}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center space-x-1">
+                        ${req.status === 'Pending' ? `
+                            <button onclick="updateLeaveStatus('${req.id}', 'Approved')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-medium">অনুমোদন</button>
+                            <button onclick="updateLeaveStatus('${req.id}', 'Rejected')" class="px-2 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-medium">বাতিল</button>
+                        ` : ''}
+                        <button onclick="deleteLeaveRequest('${req.id}')" class="p-1 text-slate-400 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         function updateLeaveStatus(id, status) {
-            leaveRequests = leaveRequests.map(req => req.id === id ? { ...req, status } : req);
+            leaveRequests = leaveRequests.map(r => r.id === id ? { ...r, status } : r);
             setStorage('wp_leaves', leaveRequests);
-            showToast(`ছুটির আবেদন ${status === 'Approved' ? 'অনুমোদন' : 'বাতিল'} করা হয়েছে`, status === 'Approved' ? 'success' : 'danger');
+            showToast(`ছুটির আবেদন ${status === 'Approved' ? 'অনুমোদন' : 'বাতিল'} করা হয়েছে`, 'info');
             renderAdminDashboard();
+        }
+
+        function deleteLeaveRequest(id) {
+            leaveRequests = leaveRequests.filter(r => r.id !== id);
+            setStorage('wp_leaves', leaveRequests);
+            showToast('ছুটির আবেদন রিমুভ করা হয়েছে', 'danger');
+            renderAdminDashboard();
+            renderEmployeeDashboard();
         }
 
         function renderAdminShiftTable() {
@@ -1016,39 +1059,52 @@
                 table.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-slate-500">কোনো আবেদন নেই</td></tr>`;
                 return;
             }
-
-            table.innerHTML = shiftRequests.map(req => {
-                let statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-500/20 text-amber-300">অপেক্ষমাণ</span>`;
-                if (req.status === 'Approved') statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-500/20 text-emerald-300">অনুমোদিত</span>`;
-                if (req.status === 'Rejected') statusBadge = `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-rose-500/20 text-rose-300">বাতিলকৃত</span>`;
-
-                return `
-                    <tr class="hover:bg-slate-700/20">
-                        <td class="py-3 px-4 font-semibold text-slate-200">${req.empName} <span class="text-[10px] text-slate-400 block">${req.empId}</span></td>
-                        <td class="py-3 px-4 font-medium text-cyan-300">${req.desiredShift}</td>
-                        <td class="py-3 px-4 font-mono text-slate-400">${req.date}</td>
-                        <td class="py-3 px-4 text-slate-300">${req.reason}</td>
-                        <td class="py-3 px-4">${statusBadge}</td>
-                        <td class="py-3 px-4 text-center">
-                            ${req.status === 'Pending' ? `
-                                <div class="flex items-center justify-center space-x-2">
-                                    <button onclick="updateShiftStatus('${req.id}', 'Approved')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] rounded-lg font-medium shadow">অনুমোদন</button>
-                                    <button onclick="updateShiftStatus('${req.id}', 'Rejected')" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white text-[11px] rounded-lg font-medium shadow">বাতিল</button>
-                                </div>
-                            ` : `<span class="text-xs text-slate-500">নিষ্পন্ন</span>`}
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            table.innerHTML = shiftRequests.map(req => `
+                <tr class="hover:bg-slate-700/20">
+                    <td class="py-3 px-4 font-semibold text-slate-200">${req.empName} <span class="text-[10px] text-slate-400 block">${req.empId}</span></td>
+                    <td class="py-3 px-4 font-medium text-cyan-300">${req.desiredShift}</td>
+                    <td class="py-3 px-4 font-mono text-slate-400">${req.date}</td>
+                    <td class="py-3 px-4 text-slate-300">${req.reason}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${req.status==='Approved'?'bg-emerald-500/20 text-emerald-300':req.status==='Rejected'?'bg-rose-500/20 text-rose-300':'bg-amber-500/20 text-amber-300'}">
+                            ${req.status}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center space-x-1">
+                        ${req.status === 'Pending' ? `
+                            <button onclick="updateShiftStatus('${req.id}', 'Approved')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-medium">অনুমোদন</button>
+                            <button onclick="updateShiftStatus('${req.id}', 'Rejected')" class="px-2 py-1 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-medium">বাতিল</button>
+                        ` : ''}
+                        <button onclick="deleteShiftRequest('${req.id}')" class="p-1 text-slate-400 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         function updateShiftStatus(id, status) {
-            shiftRequests = shiftRequests.map(req => req.id === id ? { ...req, status } : req);
+            const req = shiftRequests.find(r => r.id === id);
+            if (req) {
+                req.status = status;
+                if (status === 'Approved') {
+                    const emp = employees.find(e => e.id === req.empId);
+                    if (emp) emp.shift = req.desiredShift;
+                    setStorage('wp_employees', employees);
+                }
+            }
             setStorage('wp_shifts', shiftRequests);
-            showToast(`শিফট পরিবর্তনের আবেদন ${status === 'Approved' ? 'অনুমোদন' : 'বাতিল'} করা হয়েছে`, status === 'Approved' ? 'success' : 'danger');
+            showToast(`শিফট পরিবর্তনের আবেদন ${status === 'Approved' ? 'অনুমোদন' : 'বাতিল'} করা হয়েছে`, 'info');
             renderAdminDashboard();
         }
 
+        function deleteShiftRequest(id) {
+            shiftRequests = shiftRequests.filter(r => r.id !== id);
+            setStorage('wp_shifts', shiftRequests);
+            showToast('শিফট পরিবর্তনের আবেদন রিমুভ করা হয়েছে', 'danger');
+            renderAdminDashboard();
+            renderEmployeeDashboard();
+        }
+
+        // Employee Management (CRUD)
         function renderAdminRosterTable() {
             const table = document.getElementById('adminRosterBody');
             table.innerHTML = employees.map(emp => `
@@ -1056,63 +1112,213 @@
                     <td class="py-3 px-4 font-mono text-indigo-400 font-bold">${emp.id}</td>
                     <td class="py-3 px-4 font-semibold text-slate-100">${emp.name}</td>
                     <td class="py-3 px-4 text-slate-300">${emp.designation}</td>
+                    <td class="py-3 px-4 text-slate-300">${emp.department || 'General'}</td>
                     <td class="py-3 px-4 font-mono text-emerald-400">${emp.shift}</td>
-                    <td class="py-3 px-4 text-center">
-                        <button onclick="editEmployeeShift('${emp.id}')" class="px-2.5 py-1 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded-lg transition border border-slate-600">
-                            <i class="fa-solid fa-pen-to-square"></i> সময় পরিবর্তন
+                    <td class="py-3 px-4 text-center space-x-2">
+                        <button onclick="editEmployee('${emp.id}')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs rounded transition">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
+                        <button onclick="deleteEmployee('${emp.id}')" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white text-xs rounded transition">
+                            <i class="fa-solid fa-trash"></i> Delete
                         </button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function editEmployeeShift(empId) {
+        function editEmployee(empId) {
             const emp = employees.find(e => e.id === empId);
             if (!emp) return;
-            const newShift = prompt(`${emp.name}-এর নতুন শিফট নির্ধারণ করুন:`, emp.shift);
-            if (newShift && newShift.trim() !== '') {
-                emp.shift = newShift;
-                setStorage('wp_employees', employees);
-                showToast(`শিফট পরিবর্তন করে ${newShift} করা হয়েছে`, 'success');
-                renderAdminRosterTable();
-            }
+            document.getElementById('editEmpId').value = emp.id;
+            document.getElementById('newEmpName').value = emp.name;
+            document.getElementById('newEmpRole').value = emp.designation;
+            document.getElementById('newEmpDept').value = emp.department || '';
+            document.getElementById('empModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-indigo-400"></i> কর্মচারী সম্পাদনা করুন`;
+            populateShiftSelectOptions();
+            document.getElementById('newEmpShift').value = emp.shift;
+            openModal('addEmpModal');
         }
 
+        function deleteEmployee(empId) {
+            if (employees.length <= 1) {
+                showToast('সর্বনিম্ন একজন কর্মচারী সিস্টেমে থাকা আবশ্যক!', 'danger');
+                return;
+            }
+            employees = employees.filter(e => e.id !== empId);
+            setStorage('wp_employees', employees);
+            if (activeEmpId === empId) {
+                activeEmpId = employees[0].id;
+                setStorage('wp_active_emp_id', activeEmpId);
+            }
+            populateActiveUserSelect();
+            showToast('কর্মচারী সফলভাবে অপসারণ করা হয়েছে', 'danger');
+            renderAdminDashboard();
+            renderEmployeeDashboard();
+        }
+
+        function handleEmpSave(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editEmpId').value;
+            const name = document.getElementById('newEmpName').value;
+            const designation = document.getElementById('newEmpRole').value;
+            const department = document.getElementById('newEmpDept').value;
+            const shift = document.getElementById('newEmpShift').value;
+
+            if (editId) {
+                // Edit existing
+                employees = employees.map(emp => emp.id === editId ? { ...emp, name, designation, department, shift } : emp);
+                showToast('কর্মচারীর তথ্য আপডেট করা হয়েছে', 'success');
+            } else {
+                // Add new
+                const newEmp = {
+                    id: 'EMP-' + Math.floor(105 + Math.random() * 900),
+                    name,
+                    designation,
+                    department,
+                    shift
+                };
+                employees.push(newEmp);
+                showToast('নতুন কর্মচারী যোগ করা হয়েছে', 'success');
+            }
+
+            setStorage('wp_employees', employees);
+            populateActiveUserSelect();
+            closeModal('addEmpModal');
+            document.getElementById('addEmpForm').reset();
+            document.getElementById('editEmpId').value = '';
+            renderAdminDashboard();
+            renderEmployeeDashboard();
+        }
+
+        // Shift Management (CRUD)
+        function renderAdminShiftsList() {
+            const table = document.getElementById('adminShiftsListBody');
+            table.innerHTML = customShifts.map(s => `
+                <tr class="hover:bg-slate-700/20">
+                    <td class="py-3 px-4 font-semibold text-slate-100">${s.name}</td>
+                    <td class="py-3 px-4 font-mono text-emerald-400">${s.startTime}</td>
+                    <td class="py-3 px-4 font-mono text-rose-400">${s.endTime}</td>
+                    <td class="py-3 px-4 text-center space-x-2">
+                        <button onclick="editShift('${s.id}')" class="px-2.5 py-1 bg-cyan-600 hover:bg-cyan-700 text-white text-xs rounded transition">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
+                        <button onclick="deleteShift('${s.id}')" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white text-xs rounded transition">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function populateShiftSelectOptions() {
+            const select1 = document.getElementById('newEmpShift');
+            const select2 = document.getElementById('desiredShift');
+            const options = customShifts.map(s => `<option value="${s.name} (${s.startTime} - ${s.endTime})">${s.name} (${s.startTime} - ${s.endTime})</option>`).join('');
+            if (select1) select1.innerHTML = options;
+            if (select2) select2.innerHTML = options;
+        }
+
+        function editShift(shiftId) {
+            const s = customShifts.find(x => x.id === shiftId);
+            if (!s) return;
+            document.getElementById('editShiftId').value = s.id;
+            document.getElementById('shiftNameInput').value = s.name;
+            document.getElementById('shiftStartTimeInput').value = s.startTime;
+            document.getElementById('shiftEndTimeInput').value = s.endTime;
+            document.getElementById('shiftCrudModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-cyan-400"></i> শিফট সম্পাদনা করুন`;
+            openModal('shiftCrudModal');
+        }
+
+        function deleteShift(shiftId) {
+            if (customShifts.length <= 1) {
+                showToast('সর্বনিম্ন একটি শিফট চালু থাকতে হবে!', 'danger');
+                return;
+            }
+            customShifts = customShifts.filter(s => s.id !== shiftId);
+            setStorage('wp_shifts_list', customShifts);
+            showToast('শিফট রিমুভ করা হয়েছে', 'danger');
+            renderAdminDashboard();
+            populateShiftSelectOptions();
+        }
+
+        function handleShiftSave(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editShiftId').value;
+            const name = document.getElementById('shiftNameInput').value;
+            const startTime = document.getElementById('shiftStartTimeInput').value;
+            const endTime = document.getElementById('shiftEndTimeInput').value;
+
+            if (editId) {
+                customShifts = customShifts.map(s => s.id === editId ? { ...s, name, startTime, endTime } : s);
+                showToast('শিফট এর তথ্য আপডেট করা হয়েছে', 'success');
+            } else {
+                customShifts.push({
+                    id: 'S' + Date.now(),
+                    name,
+                    startTime,
+                    endTime
+                });
+                showToast('নতুন শিফট তৈরি করা হয়েছে', 'success');
+            }
+
+            setStorage('wp_shifts_list', customShifts);
+            closeModal('shiftCrudModal');
+            document.getElementById('shiftCrudForm').reset();
+            document.getElementById('editShiftId').value = '';
+            populateShiftSelectOptions();
+            renderAdminDashboard();
+        }
+
+        // Attendance Logs Admin Table
         function renderAdminLiveLogs() {
             const table = document.getElementById('adminLiveLogsBody');
             const filter = document.getElementById('adminFilterStatus').value;
-
             let filteredLogs = attendanceLogs;
-            if (filter !== 'all') {
-                filteredLogs = attendanceLogs.filter(l => l.status === filter);
-            }
+            if (filter !== 'all') filteredLogs = attendanceLogs.filter(l => l.status === filter);
 
             if (filteredLogs.length === 0) {
-                table.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">কোনো রেকর্ড পাওয়া যায়নি</td></tr>`;
+                table.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">কোনো উপস্থিতি রেকর্ড পাওয়া যায়নি</td></tr>`;
                 return;
             }
 
-            table.innerHTML = filteredLogs.map(log => {
-                let statusTag = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Present</span>`;
-                if(log.status === 'Checked Out') statusTag = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-700 text-slate-300">Checked Out</span>`;
-                if(log.status === 'On Leave') statusTag = `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/20 text-rose-400 border border-rose-500/30">On Leave</span>`;
-
-                return `
-                    <tr class="hover:bg-slate-700/20">
-                        <td class="py-3 px-4 font-semibold text-slate-200">${log.empName} <span class="text-[10px] text-slate-400 block">${log.empId}</span></td>
-                        <td class="py-3 px-4 font-mono text-slate-400">${log.date}</td>
-                        <td class="py-3 px-4 text-emerald-400 font-mono">${log.checkIn}</td>
-                        <td class="py-3 px-4 text-rose-400 font-mono">${log.checkOut}</td>
-                        <td class="py-3 px-4 font-mono">${log.duration}</td>
-                        <td class="py-3 px-4 text-xs text-slate-400">${log.location}</td>
-                        <td class="py-3 px-4">${statusTag}</td>
-                    </tr>
-                `;
-            }).join('');
+            table.innerHTML = filteredLogs.map(log => `
+                <tr class="hover:bg-slate-700/20">
+                    <td class="py-3 px-4 font-semibold text-slate-200">${log.empName} <span class="text-[10px] text-slate-400 block">${log.empId}</span></td>
+                    <td class="py-3 px-4 font-mono text-slate-400">${log.date}</td>
+                    <td class="py-3 px-4 text-emerald-400 font-mono">${log.checkIn}</td>
+                    <td class="py-3 px-4 text-rose-400 font-mono">${log.checkOut}</td>
+                    <td class="py-3 px-4 font-mono">${log.duration}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${log.status==='Present'?'bg-emerald-500/20 text-emerald-300':log.status==='Checked Out'?'bg-slate-700 text-slate-300':'bg-rose-500/20 text-rose-300'}">
+                            ${log.status}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="deleteAttendanceLog('${log.id}')" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        // FORM SUBMISSIONS & MODALS
+        function deleteAttendanceLog(logId) {
+            attendanceLogs = attendanceLogs.filter(l => String(l.id) !== String(logId));
+            setStorage('wp_attendance', attendanceLogs);
+            showToast('উপস্থিতির লগ মুছে ফেলা হয়েছে', 'danger');
+            renderAdminDashboard();
+            renderEmployeeDashboard();
+        }
+
+        // Submissions & Utility Functions
         function openModal(modalId) {
+            if (modalId === 'addEmpModal' && !document.getElementById('editEmpId').value) {
+                document.getElementById('addEmpForm').reset();
+                document.getElementById('empModalTitle').innerHTML = `<i class="fa-solid fa-user-plus text-emerald-400"></i> নতুন কর্মচারী যোগ করুন`;
+                populateShiftSelectOptions();
+            }
+            if (modalId === 'shiftCrudModal' && !document.getElementById('editShiftId').value) {
+                document.getElementById('shiftCrudForm').reset();
+                document.getElementById('shiftCrudModalTitle').innerHTML = `<i class="fa-solid fa-business-time text-cyan-400"></i> নতুন শিফট যোগ করুন`;
+            }
             document.getElementById(modalId).classList.remove('hidden');
         }
 
@@ -1122,88 +1328,94 @@
 
         function handleLeaveSubmit(e) {
             e.preventDefault();
-            const type = document.getElementById('leaveType').value;
-            const startDate = document.getElementById('leaveStartDate').value;
-            const endDate = document.getElementById('leaveEndDate').value;
-            const reason = document.getElementById('leaveReason').value;
-
-            const newLeave = {
+            const currentEmp = getActiveEmployee();
+            leaveRequests.unshift({
                 id: 'LV-' + Math.floor(100 + Math.random() * 900),
-                empId: CURRENT_USER.id,
-                empName: CURRENT_USER.name,
-                type,
-                startDate,
-                endDate,
-                reason,
+                empId: currentEmp.id,
+                empName: currentEmp.name,
+                type: document.getElementById('leaveType').value,
+                startDate: document.getElementById('leaveStartDate').value,
+                endDate: document.getElementById('leaveEndDate').value,
+                reason: document.getElementById('leaveReason').value,
                 status: 'Pending'
-            };
-
-            leaveRequests.unshift(newLeave);
+            });
             setStorage('wp_leaves', leaveRequests);
             closeModal('leaveModal');
             document.getElementById('leaveForm').reset();
-            showToast('ছুটির আবেদন সফলভাবে জমা দেয়া হয়েছে!', 'success');
+            showToast('ছুটির আবেদন সম্পন্ন হয়েছে', 'success');
             renderEmployeeDashboard();
         }
 
         function handleShiftSubmit(e) {
             e.preventDefault();
-            const desiredShift = document.getElementById('desiredShift').value;
-            const date = document.getElementById('shiftDate').value;
-            const reason = document.getElementById('shiftReason').value;
-
-            const newShiftReq = {
+            const currentEmp = getActiveEmployee();
+            shiftRequests.unshift({
                 id: 'SF-' + Math.floor(100 + Math.random() * 900),
-                empId: CURRENT_USER.id,
-                empName: CURRENT_USER.name,
-                desiredShift,
-                date,
-                reason,
+                empId: currentEmp.id,
+                empName: currentEmp.name,
+                desiredShift: document.getElementById('desiredShift').value,
+                date: document.getElementById('shiftDate').value,
+                reason: document.getElementById('shiftReason').value,
                 status: 'Pending'
-            };
-
-            shiftRequests.unshift(newShiftReq);
+            });
             setStorage('wp_shifts', shiftRequests);
             closeModal('shiftModal');
             document.getElementById('shiftForm').reset();
-            showToast('শিফট পরিবর্তনের আবেদন সফলভাবে জমা দেয়া হয়েছে!', 'success');
+            showToast('শিফট পরিবর্তনের আবেদন সম্পন্ন হয়েছে', 'success');
             renderEmployeeDashboard();
         }
 
-        function handleAddEmployeeSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('newEmpName').value;
-            const designation = document.getElementById('newEmpRole').value;
-            const shift = document.getElementById('newEmpShift').value;
-
-            const newEmp = {
-                id: 'EMP-' + Math.floor(105 + Math.random() * 900),
-                name,
-                designation,
-                shift
-            };
-
-            employees.push(newEmp);
-            setStorage('wp_employees', employees);
-            closeModal('addEmpModal');
-            document.getElementById('addEmpForm').reset();
-            showToast('নতুন কর্মচারী সফলভাবে তৈরি করা হয়েছে!', 'success');
-            renderAdminDashboard();
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+                employees,
+                customShifts,
+                attendanceLogs,
+                leaveRequests,
+                shiftRequests
+            }, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `workduty_backup_${getTodayFormatted()}.json`);
+            dlAnchorElem.click();
+            showToast('ব্যাকআপ ফাইল ডাইনলোড শুরু হয়েছে', 'success');
         }
 
-        // INITIALIZATION ON WINDOW LOAD
+        function resetData() {
+            if (confirm('আপনি কি সমস্ত ডেটা রিসেট করে ডিফল্ট অবস্থায় ফিরিয়ে নিতে চান?')) {
+                localStorage.clear();
+                customShifts = defaultShifts;
+                employees = defaultEmployees;
+                attendanceLogs = defaultAttendanceLogs;
+                leaveRequests = defaultLeaveRequests;
+                shiftRequests = defaultShiftRequests;
+                activeEmpId = employees[0].id;
+
+                setStorage('wp_shifts_list', customShifts);
+                setStorage('wp_employees', employees);
+                setStorage('wp_attendance', attendanceLogs);
+                setStorage('wp_leaves', leaveRequests);
+                setStorage('wp_shifts', shiftRequests);
+                setStorage('wp_active_emp_id', activeEmpId);
+
+                populateActiveUserSelect();
+                renderEmployeeDashboard();
+                renderAdminDashboard();
+                showToast('সমস্ত ডেটা রিসেট সম্পন্ন হয়েছে', 'info');
+            }
+        }
+
+        // Window Init
         window.onload = function() {
-            // Start Clock Interval
             updateClock();
             setInterval(updateClock, 1000);
 
-            // Set default date inputs to today
             const todayStr = getTodayFormatted();
             if (document.getElementById('leaveStartDate')) document.getElementById('leaveStartDate').value = todayStr;
             if (document.getElementById('leaveEndDate')) document.getElementById('leaveEndDate').value = todayStr;
             if (document.getElementById('shiftDate')) document.getElementById('shiftDate').value = todayStr;
 
-            // Render Employee view by default
+            populateActiveUserSelect();
+            populateShiftSelectOptions();
             renderEmployeeDashboard();
         };
     </script>
